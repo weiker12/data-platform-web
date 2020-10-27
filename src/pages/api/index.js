@@ -89,7 +89,6 @@ export default () => {
       const {data, success, globalError} = res;
       setLoading(false);
       if (!success) return message.error(globalError, 3);
-      console.log('data', data);
       setDataSource(data.content.map(v => ({key: v.id, ...v})));
       setTotalSize(data.numberOfElements);
     } catch (err) {
@@ -105,7 +104,6 @@ export default () => {
       const {data, success, globalError} = res;
       setLoading(false);
       if (!success) return message.error(globalError, 3);
-      console.log('apiInfo', data);
       setApiInfo(data);
     } catch (err) {
       console.log(err);
@@ -138,9 +136,13 @@ export default () => {
     }
   };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     setModalType('新增');
-    setModalShow(true);
+    const dictRes = await getDictAjax({});
+    if (dictRes) {
+      setDict(dictRes);
+      setModalShow(true);
+    }
   };
 
   const handleEdit = async id => {

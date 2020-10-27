@@ -15,7 +15,6 @@ import {
 import '../index.less';
 
 export default props => {
-  console.log('props', props);
   const {
     visible,
     dict,
@@ -24,7 +23,13 @@ export default props => {
     getDataSourceAjax,
     modalType,
   } = props;
-  const {api_fields, dsCodes, result_type, send, status: statusDict} = dict;
+  const {
+    apiFields,
+    dsCodes,
+    resultType: resultTypeDict,
+    send,
+    status: statusDict,
+  } = dict;
   const {
     apiCode,
     apiName,
@@ -46,9 +51,7 @@ export default props => {
     () => dataConvertList || [],
   );
 
-  const [local_api_fields, setLocal_api_fields] = useState(
-    () => api_fields || [],
-  );
+  const [localApiFields, setLocalApiFields] = useState(() => apiFields || []);
 
   const [isSlice, setIsSlice] = useState(() => (querySql ? 0 : 1));
 
@@ -95,6 +98,21 @@ export default props => {
     }
   };
 
+  const getSqlInfo = async () => {
+    const res = form.getFieldsValue();
+    const {dataFlowList, querySql} = res;
+    const oneDataFlow = dataFlowList?.[Object.keys(dataFlowList)[0]];
+    if (!querySql && !oneDataFlow) return message.error('请填写sql语句', 2);
+    try {
+      const res = await Service.getSqlInfo({sql: querySql || oneDataFlow});
+      const {data, success, globalError} = res;
+      if (!success) return message.error(globalError, 3);
+      setLocalApiFields([...data.apiFields]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const handleDeleteFlow = id => {
     setLocalDataFlowList(pre => pre.filter(v => v.id !== id));
   };
@@ -111,10 +129,7 @@ export default props => {
     setLocalDataConvertList(pre => [...pre, {id: Date.now()}]);
   };
 
-  const handleSliceChange = v => {};
-
   const onFinish = res => {
-    console.log('res', res);
     const {dataConvertList, dataFlowList} = res;
     const {apiFieldName, convertScript} = dataConvertList;
     const newDataConvertList = Object.keys(apiFieldName).map(v => ({
@@ -215,7 +230,7 @@ export default props => {
               initialValue={resultType || ''}
             >
               <Select>
-                {result_type?.map(v => (
+                {resultTypeDict?.map(v => (
                   <Select.Option value={v.code} key={v.code}>
                     {v.name}
                   </Select.Option>
@@ -325,11 +340,12 @@ export default props => {
           <Button
             type="primary"
             style={{width: '100%', margin: '5px 0 20px 0'}}
+            onClick={getSqlInfo}
           >
-            查询字典
+            查询sql信息
           </Button>
         )}
-        {api_fields?.length > 0 && (
+        {apiFields?.length > 0 && (
           <Row gutter={16}>
             <Col span="24">
               <Form.Item
@@ -350,7 +366,7 @@ export default props => {
                         initialValue={v.apiFieldName || ''}
                       >
                         <Select>
-                          {local_api_fields?.map(l => (
+                          {localApiFields?.map(l => (
                             <Select.Option value={l} key={l}>
                               {l}
                             </Select.Option>

@@ -31,4 +31,10 @@ export default {
       data,
     });
   },
+  getSqlInfo(data) {
+    return request(`/v1/getSqlInfo`, {
+      method: 'POST',
+      data,
+    });
+  },
 };
