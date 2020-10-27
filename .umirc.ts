@@ -17,7 +17,7 @@ export default defineConfig({
   },
   proxy: {
     '/data-platform': {
-      target: '192.168.74.127:8080',
+      target: '192.168.74.244:8080',
       changeOrigin: true,
       // 'pathRewrite': { '^/api' : '' },
     },

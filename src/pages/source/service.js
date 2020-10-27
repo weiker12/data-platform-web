@@ -13,4 +13,16 @@ export default {
       data,
     });
   },
+  saveDataSource(data) {
+    return request(`/v1/saveDataSource`, {
+      method: 'POST',
+      data,
+    });
+  },
+  delDataSource(data) {
+    return request(`/v1/delDataSource`, {
+      method: 'POST',
+      data,
+    });
+  },
 };

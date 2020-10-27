@@ -19,11 +19,12 @@ import './index.less';
 export default () => {
   const {showLoading, hideLoading} = useGlobalLoading();
   const [dataSource, setDataSource] = useState([]);
+  const [apiInfo, setApiInfo] = useState({});
   const [totalSize, setTotalSize] = useState(10);
   const [loading, setLoading] = useState(false);
   const [modalShow, setModalShow] = useState(false);
-  const [modalInfo, setModalInfo] = useState({});
-  const [dict, setDict] = useState([]);
+  const [modalType, setModalType] = useState('修改');
+  const [dict, setDict] = useState({});
   const [form] = Form.useForm();
   const pageSize = 10;
   const columns = [
@@ -59,9 +60,19 @@ export default () => {
       key: 'action',
       render: (text, record) => (
         <Space size="middle">
-          <a onClick={handleAdd}>新增</a>
           <a onClick={() => handleEdit(record.id)}>修改</a>
-          <a>删除</a>
+          <a
+            onClick={() =>
+              Modal.confirm({
+                okText: '确定',
+                cancelText: '取消',
+                content: '确定删除吗？',
+                onOk: () => handleDelete(record.apiCode),
+              })
+            }
+          >
+            删除
+          </a>
         </Space>
       ),
     },
@@ -87,6 +98,21 @@ export default () => {
     }
   };
 
+  const getApiInfoAjax = async params => {
+    setLoading(true);
+    try {
+      const res = await Service.getApiInfo(params);
+      const {data, success, globalError} = res;
+      setLoading(false);
+      if (!success) return message.error(globalError, 3);
+      console.log('apiInfo', data);
+      setApiInfo(data);
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
+  };
+
   const getDictAjax = async params => {
     try {
       const res = await Service.getDict(params);
@@ -98,15 +124,32 @@ export default () => {
     }
   };
 
+  const handleDelete = async apiCode => {
+    setLoading(true);
+    try {
+      const res = await Service.delApiInfo({apiCode});
+      const {data, success, globalError} = res;
+      setLoading(false);
+      if (!success) return message.error(globalError, 3);
+      getDataSourceAjax({pageNumber: 1, pageSize});
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
+  };
+
   const handleAdd = () => {
+    setModalType('新增');
     setModalShow(true);
   };
 
   const handleEdit = async id => {
+    setModalType('修改');
     const current = dataSource?.find(v => v.id === id);
-    const dict = await getDictAjax({apiCode: current.apiCode});
-    if (dict) {
-      setModalInfo({...current, dict});
+    await getApiInfoAjax({apiCode: current.apiCode});
+    const dictRes = await getDictAjax({apiCode: current.apiCode});
+    if (dictRes) {
+      setDict(dictRes);
       setModalShow(true);
     }
   };
@@ -150,6 +193,11 @@ export default () => {
               重置
             </Button>
           </Col>
+          <Col className="gutter-row" span={1}>
+            <Button type="primary" onClick={handleAdd}>
+              新增
+            </Button>
+          </Col>
         </Row>
       </Form>
       <Table
@@ -164,7 +212,9 @@ export default () => {
           visible={modalShow}
           setModalShow={setModalShow}
           getDataSourceAjax={getDataSourceAjax}
-          data={modalInfo}
+          dict={dict}
+          info={apiInfo}
+          modalType={modalType}
         />
       )}
     </div>

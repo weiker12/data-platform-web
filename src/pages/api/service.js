@@ -19,4 +19,16 @@ export default {
       data,
     });
   },
+  saveApiInfo(data) {
+    return request(`/v1/saveApiInfo`, {
+      method: 'POST',
+      data,
+    });
+  },
+  delApiInfo(data) {
+    return request(`/v1/delApiInfo`, {
+      method: 'POST',
+      data,
+    });
+  },
 };

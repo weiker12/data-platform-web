@@ -3,7 +3,7 @@ const CONFIG = {
     // api: 'http://192.168.44.65:17090/online-classroom',
     // api: 'http://192.168.74.14:17090/online-classroom',
     // api: 'http://192.168.44.196:17090/online-classroom',
-    api: 'http://192.168.74.127:8080', // 上朝本地
+    api: 'http://192.168.74.244:8080', // 上朝本地
     // api: 'http://art-admin-dev.peilian.com/art-admin',
     // assetsRoot: 'https://tests001.pnlyy.com', // 静态资源域名
   },
