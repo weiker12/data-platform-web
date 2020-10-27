@@ -138,6 +138,7 @@ export default () => {
 
   const handleAdd = async () => {
     setModalType('新增');
+    setApiInfo({});
     const dictRes = await getDictAjax({});
     if (dictRes) {
       setDict(dictRes);

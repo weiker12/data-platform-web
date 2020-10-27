@@ -86,7 +86,6 @@ export default () => {
       const {data, success, globalError} = res;
       setLoading(false);
       if (!success) return message.error(globalError, 3);
-      console.log('data', data);
       setDataSourceList(data.content.map(v => ({key: v.id, ...v})));
       setTotalSize(data.numberOfElements);
     } catch (err) {
