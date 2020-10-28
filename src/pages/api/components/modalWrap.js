@@ -136,9 +136,12 @@ export default props => {
       apiFieldName: apiFieldName[v],
       convertScript: convertScript[v],
     }));
-    const newDataFlowList = Object.keys(dataFlowList).map(v => ({
-      querySql: dataFlowList[v],
-    }));
+    const newDataFlowList = dataFlowList
+      ? Object.keys(dataFlowList).map((v, i) => ({
+          querySql: dataFlowList[v],
+          collectionType: i === 0 ? 'all' : 'sub',
+        }))
+      : null;
     saveAjax({
       id,
       ...res,
@@ -345,7 +348,7 @@ export default props => {
             查询sql信息
           </Button>
         )}
-        {apiFields?.length > 0 && (
+        {localApiFields?.length > 0 && (
           <Row gutter={16}>
             <Col span="24">
               <Form.Item
