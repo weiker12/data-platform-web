@@ -23,6 +23,7 @@ export default () => {
   const [totalSize, setTotalSize] = useState(10);
   const [loading, setLoading] = useState(false);
   const [modalShow, setModalShow] = useState(false);
+  const [dict, setDict] = useState({});
   const [form] = Form.useForm();
   const pageSize = 10;
   const columns = [
@@ -94,6 +95,17 @@ export default () => {
     }
   };
 
+  const getDictAjax = async params => {
+    try {
+      const res = await Service.getDict(params);
+      const {data, success, globalError} = res;
+      if (!success) return message.error(globalError, 3);
+      return Promise.resolve(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const getDataSourceAjax = async params => {
     setLoading(true);
     try {
@@ -123,14 +135,22 @@ export default () => {
     }
   };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     setDataSourceItem({});
-    setModalShow(true);
+    const dictRes = await getDictAjax({});
+    if (dictRes) {
+      setDict(dictRes);
+      setModalShow(true);
+    }
   };
 
   const handleEdit = async id => {
     await getDataSourceAjax({id});
-    setModalShow(true);
+    const dictRes = await getDictAjax({});
+    if (dictRes) {
+      setDict(dictRes);
+      setModalShow(true);
+    }
   };
 
   const handleTableChange = e => {
@@ -186,6 +206,7 @@ export default () => {
           visible={modalShow}
           setModalShow={setModalShow}
           getDataSourceListAjax={getDataSourceListAjax}
+          dict={dict}
           info={dataSourceItem}
         />
       )}

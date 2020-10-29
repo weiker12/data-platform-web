@@ -27,7 +27,7 @@ export default props => {
     apiFields,
     dsCodes,
     resultType: resultTypeDict,
-    send,
+    send: sendDict,
     status: statusDict,
   } = dict;
   const {
@@ -43,8 +43,10 @@ export default props => {
     toSend,
   } = info;
 
-  const [localDataFlowList, setLocalDataFlowList] = useState(
-    () => dataFlowList || [],
+  const [localDataFlowList, setLocalDataFlowList] = useState(() =>
+    dataFlowList?.length > 0
+      ? dataFlowList
+      : [{collectionType: 'all', id: Date.now()}],
   );
 
   const [localDataConvertList, setLocalDataConvertList] = useState(
@@ -131,11 +133,14 @@ export default props => {
 
   const onFinish = res => {
     const {dataConvertList, dataFlowList} = res;
-    const {apiFieldName, convertScript} = dataConvertList;
-    const newDataConvertList = Object.keys(apiFieldName).map(v => ({
-      apiFieldName: apiFieldName[v],
-      convertScript: convertScript[v],
-    }));
+    let newDataConvertList = [];
+    if (dataConvertList) {
+      const {apiFieldName, convertScript} = dataConvertList;
+      newDataConvertList = Object.keys(apiFieldName).map(v => ({
+        apiFieldName: apiFieldName[v],
+        convertScript: convertScript[v],
+      }));
+    }
     const newDataFlowList = dataFlowList
       ? Object.keys(dataFlowList).map((v, i) => ({
           querySql: dataFlowList[v],
@@ -188,7 +193,7 @@ export default props => {
             >
               <Select>
                 {dsCodes?.map((v, i) => (
-                  <Select.Option value={i} key={i}>
+                  <Select.Option value={v} key={i}>
                     {v}
                   </Select.Option>
                 ))}
@@ -212,7 +217,7 @@ export default props => {
               name="status"
               label="状态"
               rules={[{required: true}]}
-              initialValue={status || ''}
+              initialValue={status}
             >
               <Select>
                 {statusDict?.map(v => (
@@ -248,11 +253,14 @@ export default props => {
               name="toSend"
               label="是否通知"
               rules={[{required: true}]}
-              initialValue={toSend || ''}
+              initialValue={toSend}
             >
               <Select>
-                <Select.Option value={1}>是</Select.Option>
-                <Select.Option value={0}>否</Select.Option>
+                {sendDict?.map(v => (
+                  <Select.Option value={v.code} key={v.code}>
+                    {v.name}
+                  </Select.Option>
+                ))}
               </Select>
             </Form.Item>
           </Col>
@@ -297,7 +305,7 @@ export default props => {
                 labelCol={{span: 3}}
                 wrapperCol={{span: 19}}
               >
-                {modalType === '新增' && (
+                {/* {isSlice === 1 && (
                   <Form.Item
                     name={['dataFlowList', `${Date.now()}`]}
                     label="全集"
@@ -306,7 +314,7 @@ export default props => {
                   >
                     <Input />
                   </Form.Item>
-                )}
+                )} */}
                 {localDataFlowList?.map(v => (
                   <Row gutter={16} key={v.id}>
                     <Col span="19">
@@ -354,7 +362,7 @@ export default props => {
               <Form.Item
                 // name="dataConvertList"
                 label="报表字段处理"
-                rules={[{required: true}]}
+                rules={[{required: false}]}
                 labelCol={{span: 3}}
                 wrapperCol={{span: 19}}
               >

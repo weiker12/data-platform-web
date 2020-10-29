@@ -16,12 +16,14 @@ import '../index.less';
 
 export default props => {
   console.log('props', props);
-  const {visible, info, setModalShow, getDataSourceListAjax} = props;
+  const {visible, info, dict, setModalShow, getDataSourceListAjax} = props;
 
   const {dsCode, username, password, url, status, id} = info;
 
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [form] = Form.useForm();
+
+  const {status: statusDict} = dict;
 
   const handleOk = () => {
     form.submit();
@@ -120,11 +122,14 @@ export default props => {
           name="status"
           label="状态"
           rules={[{required: true}]}
-          initialValue={status || ''}
+          initialValue={status}
         >
           <Select>
-            <Select.Option value={1}>有效</Select.Option>
-            <Select.Option value={0}>无效</Select.Option>
+            {statusDict?.map(v => (
+              <Select.Option value={v.code} key={v.code}>
+                {v.name}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
         <Form.Item

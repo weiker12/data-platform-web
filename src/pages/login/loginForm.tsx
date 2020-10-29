@@ -27,7 +27,7 @@ export default () => {
       const {data, success, globalError} = res;
       hideLoading();
       if (!success) return message.error(globalError, 3);
-      message.success('登陆成功', 3);
+      message.success('登录成功', 3);
       dispatch({
         type: 'login',
         payload: {name: cellphone},
@@ -120,7 +120,7 @@ export default () => {
 
       <Form.Item>
         <Button type="primary" htmlType="submit" className="login-form-button">
-          登陆
+          登录
         </Button>
       </Form.Item>
     </Form>

@@ -1,6 +1,12 @@
 import {request} from 'utils/request';
 
 export default {
+  getDict(data) {
+    return request(`/v1/getDict`, {
+      method: 'GET',
+      data,
+    });
+  },
   getDataSourceList(data) {
     return request(`/v1/getDataSourceList`, {
       method: 'POST',
