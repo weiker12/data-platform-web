@@ -20,7 +20,7 @@ export default () => {
         console.log(collapsed, type);
       }}
     >
-      <div className={styles['nav-title']}>服务平台</div>
+      <div className={styles['nav-title']}>数据报表平台</div>
       <Menu
         theme="dark"
         mode="inline"

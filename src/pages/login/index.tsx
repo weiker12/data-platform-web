@@ -11,8 +11,7 @@ export default () => {
       <div className="login-main">
         <img className="login-main-img" src={ic_page} alt="" />
         <div className="login-main-right">
-          <span className="login-main-title">Platform</span>
-          <span className="login-main-title">后台管理系统</span>
+          <span className="login-main-title">数据报表平台</span>
           <LoginForm />
         </div>
       </div>
